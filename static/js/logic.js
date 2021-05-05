@@ -19,17 +19,17 @@ function createFeatures(earthquakeData) {
   function getColor(depth) {
     switch (true) {
       case depth > 40:
-        return "#0032a6";
+        return "#e70000";
       case depth > 30:
-        return "#4b6288";
+        return "#1e90e5";
       case depth > 20:
-        return "#728a91";
+        return "#60b2ac";
       case depth > 10:
-        return "#9db1a5";
+        return "#94cd7e";
       case depth > 1:
-        return "#ccd8c0";
+        return "#c4e754";
       default:
-        return "#ffffe0";
+        return "#f3ff2c";
     }
   }
 
@@ -37,7 +37,7 @@ function createFeatures(earthquakeData) {
     return {
       radius: feature.properties.mag * 7,
       fillColor: getColor(feature.geometry.coordinates[2]),
-      color: "#808080",
+      color: "grey",
       weight: 1,
       opacity: 1,
       fillOpacity: 0.7,
@@ -92,16 +92,39 @@ function createMap(earthquakes) {
       37.09, -95.71
     ],
     zoom: 5,
-    layers: [darkmap, earthquakes]
+    layers: [streetmap, earthquakes],
   });
 
   // Create a layer control
   // Pass in our baseMaps and overlayMaps
   // Add the layer control to the map
-  L.control.layers(baseMaps, overlayMaps, {
-    collapsed: false
-  }).addTo(myMap);
+  var legend = L.control({ position: "topright" });
+
+  legend.onAdd = function () {
+    var div = L.DomUtil.create("div", "info legend");
+    var grades = [1, 10, 20, 30, 40];
+    var colors = ["#f3ff2c", "#c4e754", "#94cd7e", "#60b2ac", "#1e90e5", "#e70000"];
+
+    var legendInfo = "<h3>Depth of Earthquakes</h3>"
+    div.innerHTML = legendInfo;
+
+    for (var i = 0; i < grades.length; i++) {
+      div.innerHTML +=
+        "<i style='background: " +
+        colors[i] +
+        "'></i> " +
+        grades[i] +
+        (grades[i + 1] ? "&ndash;" + grades[i + 1] + "<p>" : "+");
+    }
+
+    return div;
+  };
+
+
+  legend.addTo(myMap);
+
 }
+
 
 
 
